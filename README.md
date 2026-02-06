@@ -1,3 +1,4 @@
-# Computação Quântica
-Alguns simples códigos escritos em Python, usando as bibliotecas do Qiskit e similares.
+ # Quantum Algorithms
+ 
+Some simple codes written in Python, usign the libs from Qiskit and friends.
 
