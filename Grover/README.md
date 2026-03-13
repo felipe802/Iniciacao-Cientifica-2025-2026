@@ -24,7 +24,7 @@ In this specific implementation, the target state is $\omega = 5$ (binary `0101`
 
 | Main Circuit (Modular Abstraction) | Oracle Internal Structure ($U_5$) |
 | :---: | :---: |
-| ![Main Circuit](GroverMainCirc.png) | ![Oracle](OracleCirc.png) |
+| ![Main Circuit](grover_circ.png) | ![Oracle](grover_oracle.png) |
 
 > **Note on Uncomputing:** The Oracle design includes proper uncomputing (applying $X$ gates before and after the Multi-Controlled Z gate) to ensure auxiliary operations do not create garbage entanglement, which would destroy the interference pattern.
 
