@@ -32,7 +32,7 @@ In this specific implementation, the target state is $\omega = 5$ (binary `0101`
 
 | Output Histogram |
 | :---: |
-| ![Histogram](GroverHist.png) |
+| ![Histogram](histogram.png) |
 
 After 3 iterations, the amplitude of the state $|0101\rangle$ is successfully amplified, dominating the measurement probabilities (typically > 95%).
 
