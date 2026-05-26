@@ -1,6 +1,5 @@
-# Quarto Estado de Bell $\ket{\Psi^{-}}$
-# Este é conhecido como o Estado Singleto. Os qubits esão em oposição total
-# (antisimétricos)
+# Fourth Bell State \ket{\Psi^{-}}
+# This is known as the Singlet State. Qubits are in complete opposition (anti-symmetric)
 
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
@@ -9,28 +8,29 @@ import matplotlib.pyplot as plt
 
 qc = QuantumCircuit(2, 2)
 
-# 1. Diferente do primeiro estado, aqui invertemos ambos para |11>
-# Isso é necessário para preparar o sistema para a fase negativa posterior
+# 1. Unlike the first state, here we invert both qubits to |11>
+# This is necessary to prepare the system for the subsequent negative phase
 qc.x(0)
 qc.x(1)
 
-# 2. Criação da superposição com fase
-# Agora o sistema está em uma mistura de (|0> - |1>) carregando o qubit 1 que é |1>
+# 2. Creation of the superposition with phase
+# Now the system is in a mixture of (|0> - |1>) carrying qubit 1 which is |1>
 qc.h(0)
 
-# 3. Entrelaçamento
-# Se o qubit 0 for |0>, o alvo fica em |1> (Estado |01>)
-# Se o qubit 0 for |1>, o alvo inverte de |1> para |0> (Estado |01>)
-# O sinal negativo da porta H é "herdado", resultando em |01> - |10>
+# 3. Entanglement
+# If qubit 0 is |0>, the target remains |1> (State |01>)
+# If qubit 0 is |1>, the target flips from |1> to |0> (State |10>)
+# The negative sign from the H gate is "inherited", resulting in |01> - |10>
 qc.cx(0, 1)
 
-# 4. Medição e colapso
-# Transformamos a probabilidade quântica em dados binários clássicos
+# 4. Measurement and collapse
+# We transform quantum probability into classical binary data
 qc.measure([0, 1], [0, 1])
 
-# 5. Simulação e visualização
+# 5. Simulation and visualization
+sim = AerSimulator()
 counts = sim.run(qc, shots=1024).result().get_counts()
-print(f"Resultados da medição: {counts}")
+print(f"Measurement results: {counts}")
 
 circuit_fig = qc.draw('mpl')
 histogram_fig = plot_histogram(counts)

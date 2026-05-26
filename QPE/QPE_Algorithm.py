@@ -1,5 +1,5 @@
-# Algoritmo de Estimação de Fases (QPE)
-# Extração da fase geométrica secreta (theta = 1/8) da porta P(lambda)
+# Quantum Phase Estimation (QPE) Algorithm
+# Extraction of the secret geometric phase (theta = 1/8) of the P(lambda) gate
 
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
@@ -8,44 +8,44 @@ from qiskit.circuit.library import QFT
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1. Definição do Problema
-theta_secreto = 1/8  
-angulo = 2 * np.pi * theta_secreto
-t = 3  # Qubits de leitura (N=8)
-n_alvo = 1
+# 1. Problem Definition
+secret_theta = 1/8  
+angle = 2 * np.pi * secret_theta
+t = 3  # Readout qubits (N=8)
+n_target = 1
 
-qc = QuantumCircuit(t + n_alvo, t)
+qc = QuantumCircuit(t + n_target, t)
 
-# 2. Preparação
+# 2. Preparation
 for qubit in range(t):
     qc.h(qubit)
-qc.x(t) # Autovetor |1>
+qc.x(t) # Eigenvector |1>
 qc.barrier()
 
-# 3. Phase Kickback com potências de U
-repeticoes = 1
+# 3. Phase Kickback with powers of U
+repetitions = 1
 for counting_qubit in range(t):
-    for i in range(repeticoes):
-        qc.cp(angulo, counting_qubit, t)
-    repeticoes *= 2
+    for i in range(repetitions):
+        qc.cp(angle, counting_qubit, t)
+    repetitions *= 2
 qc.barrier()
 
-# 4. Decodificador: QFT Inversa
-qft_inversa = QFT(num_qubits=t, inverse=True, do_swaps=True).to_gate()
-qft_inversa.name = "QFT Inversa"
-qc.append(qft_inversa, range(t))
+# 4. Decoder: Inverse QFT
+qft_inverse = QFT(num_qubits=t, inverse=True, do_swaps=True).to_gate()
+qft_inverse.name = "Inverse QFT"
+qc.append(qft_inverse, range(t))
 
-# 5. Medição
+# 5. Measurement
 for i in range(t):
     qc.measure(i, i)
 
 sim = AerSimulator()
-qc_transpilado = transpile(qc, sim)
-counts = sim.run(qc_transpilado, shots=1024).result().get_counts()
+qc_transpiled = transpile(qc, sim)
+counts = sim.run(qc_transpiled, shots=1024).result().get_counts()
 
-print(f"Resultados brutos: {counts}")
+print(f"Raw results: {counts}")
 
 circuit_fig = qc.draw('mpl', style="iqp")
-histogram_fig = plot_histogram(counts, title="QPE: Fase Estimada")
+histogram_fig = plot_histogram(counts, title="QPE: Estimated Phase")
 display(circuit_fig)
 display(histogram_fig)

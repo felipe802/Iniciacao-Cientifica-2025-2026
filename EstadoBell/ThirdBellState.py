@@ -1,5 +1,5 @@
-# Terceiro Estado de Bell $\ket{\Psi^{+}}$
-# Aqui, os qubits são correlacionados de forma oposta
+# Third Bell State \ket{\Psi^{+}}
+# Here, the qubits are correlated in opposite ways
 
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
@@ -8,23 +8,24 @@ import matplotlib.pyplot as plt
 
 qc = QuantumCircuit(2, 2)
 
-# 1. Invertemos o qubit alvo (1) para |1>
-# Isso mudará o resultado da CNOT de (00, 11) para (01, 00)
+# 1. We invert the target qubit (1) to |1>
+# This will change the CNOT result from (00, 11) to (01, 10)
 qc.x(1)
 
-# 2. Criação e Superposição
+# 2. Creation and Superposition
 qc.h(0)
 
-# 3. Emaranhamento (CNOT)
-# Como o qubit 1 já é |1>, a CNOT alterna os estados base para opostos
+# 3. Entanglement (CNOT)
+# Since qubit 1 is already |1>, the CNOT toggles the basis states to opposite ones
 qc.cx(0, 1)
 
-# 4. Medição
+# 4. Measurement
 qc.measure([0, 1], [0, 1])
 
-# 5. Simulação e visualização
+# 5. Simulation and visualization
+sim = AerSimulator()
 counts = sim.run(qc, shots=1024).result().get_counts()
-print(f"Resultados |Psi+>: {counts}")
+print(f"Results |Psi+>: {counts}")
 
 circuit_fig = qc.draw('mpl')
 histogram_fig = plot_histogram(counts)

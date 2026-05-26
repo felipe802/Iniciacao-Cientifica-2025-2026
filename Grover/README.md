@@ -1,45 +1,74 @@
-# Grover's Algorithm: Quantum Search Implementation
+# Grover's Algorithm: Quantum Unstructured Search
 
-This folder contains the source code and visual results for the implementation of **Grover's Algorithm**. This algorithm provides a quadratic speedup for unstructured search problems by exploiting quantum superposition and amplitude amplification.
+This folder contains the source code and visual results for the implementation of **Grover's Algorithm**. This algorithm provides a quadratic speedup ($O(\sqrt{N})$) for unstructured search problems by exploiting quantum superposition and amplitude amplification, in contrast to classical search which requires linear complexity ($O(N)$).
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1MOiTPVyCiHzeF_KBl1Pt5YzVyCp3mh4w?usp=sharing)
 
-## Overview
-The implemented circuit demonstrates a search for a specific target state within a 4-qubit system ($N = 2^4 = 16$ possible states). 
+---
 
-The algorithm relies on two main geometric reflections:
-1. **The Oracle ($U_\omega$):** A conditional phase-flip operation that marks the target state.
-2. **The Diffuser ($U_s$):** A Householder reflection about the mean, which amplifies the probability amplitude of the marked state.
+## 1. Theoretical Operation
+
+The algorithm demonstrates a search for a specific target state within an $n = 4$ qubit system, totaling $N = 2^4 = 16$ possible computational basis states.
+
+Graphically, the algorithm operates as a **geometric rotation** of the quantum state vector toward the marked state. It relies on the repeated application of two main operators:
+
+### A. The Oracle ($U_\omega$)
+The Oracle rotates only the phase of the target state $|\omega\rangle$, leaving all other states unaltered:
+
+$$|x\rangle \mapsto \begin{cases} -|x\rangle & \text{if } x = \omega \\ \ \ \ |x\rangle & \text{if } x \neq \omega \end{cases}$$
+
+### B. The Diffuser ($U_s$)
+The Diffuser (or inversion about the mean operator) performs a reflection around the uniform superposition state $|s\rangle$. It amplifies the probability amplitude of the state that was marked negatively by the Oracle, while simultaneously reducing the amplitude of all incorrect states.
+
+### Optimal Number of Iterations ($R$)
+Unlike classical computing where we can search indefinitely, Grover's Algorithm is periodic. If we apply too many iterations, the probability begins to decrease (a phenomenon known as over-rotation). The ideal number of iterations to obtain maximum success probability is given by:
+
+$$R \approx \frac{\pi}{4}\sqrt{N}$$
+
+For $N = 16$ states:
+$$R \approx \frac{\pi}{4}\sqrt{16} = \pi \approx 3 \text{ iterations}$$
 
 ---
 
-## Implementation: Searching for $|\omega\rangle = |0101\rangle$
+## 2. Implementation: Searching for State $|\omega\rangle = |0101\rangle$
 
-In this specific implementation, the target state is $\omega = 5$ (binary `0101`). For a 4-qubit system, the optimal number of Grover iterations to maximize the probability of success is $R \approx \lfloor \frac{\pi}{4}\sqrt{16} \rfloor = 3$ iterations.
-
-**Target State:** $|0101\rangle$  
-**Code:** [`GroverAlgorithm.py`](./GroverAlgorithm.py)
+In the [`GroverAlgorithm.py`](./GroverAlgorithm.py) script, the configured target state is $\omega = 5$ (represented by the binary string `0101`).
 
 ### Circuit Structure
 
-| Main Circuit (Modular Abstraction) | Oracle Internal Structure ($U_5$) |
-| :---: | :---: |
-| ![Main Circuit](grover_circ.png) | ![Oracle](grover_oracle.png) |
+Below are the modular quantum circuit and the internal visualization of the quantum phase Oracle constructed for this search:
 
-> **Note on Uncomputing:** The Oracle design includes proper uncomputing (applying $X$ gates before and after the Multi-Controlled Z gate) to ensure auxiliary operations do not create garbage entanglement, which would destroy the interference pattern.
+| Main Circuit (3 Full Iterations) | Internal Structure of the Phase Oracle ($U_5$) |
+| :---: | :---: |
+| ![Grover Circuit](grover_circ.png) | ![Grover Oracle](grover_oracle.png) |
+
+> [!IMPORTANT]  
+> **Importance of Uncomputing:** Our Oracle design applies Pauli-X gates before and after the Multi-Controlled Z (MCZ) gate. This process is crucial to undo temporary auxiliary transformations. Without this, auxiliary qubits would create unwanted entanglement (quantum garbage), destroying the phase coherence necessary for the Diffuser's constructive interference.
 
 ### Measurement Results
 
-| Output Histogram |
+After the optimal 3 Grover iterations, the system was measured. The simulation's resulting histogram illustrates the massive amplitude amplification over the target state:
+
+| Quantum Output Histogram |
 | :---: |
 | ![Histogram](histogram.png) |
 
-After 3 iterations, the amplitude of the state $|0101\rangle$ is successfully amplified, dominating the measurement probabilities (typically > 95%).
+As expected, the amplitude of target state $|0101\rangle$ completely dominates the measurement spectrum with a success probability exceeding **95%**.
 
 ---
 
-## Technical Details
-* **Framework:** Qiskit
-* **Simulation:** `qasm_simulator` (AerSimulator) with 1024 shots.
-* **Algorithm Components:** Custom Multi-Controlled Z gates, modular sub-circuit appending, and explicit uncomputing.
-* **Purpose:** Expository material and practical implementation for Undergraduate Research (IC).
+## 3. Technical Details
+
+* **Framework:** Qiskit (v1.x)
+* **Simulator:** `AerSimulator` (Qiskit Aer) with 1024 shots.
+* **Demonstrated Concepts:** Custom multi-controlled gates, Qiskit modular circuits, and structured uncomputing.
+* **Purpose:** Practical support material for Quantum Computing students and Undergraduate Research (IC).
+
+---
+
+## 4. How to Run
+
+To simulate Grover's circuit locally and obtain the graphical outputs:
+```bash
+python GroverAlgorithm.py
+```
